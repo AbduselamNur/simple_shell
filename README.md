@@ -1,6 +1,4 @@
-## https://www.google.com/search?q=shell+script+logo&rlz=1C1YTUH_enET1026ET1026&sxsrf=APwXEdfAv7Ku6IQHWAdFner3J8vW8QDgNw:1682713223297&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjXxLufs83-AhXPbsAKHaOeADQQ_AUoAXoECAEQAw&biw=1920&bih=929&dpr=1#imgrc=uW5WGHCVW3_FnM&imgdii=Mv3OeQuX4QwXHM
-
-## 0x16. C - Simple Shell
+#### 0x16. C - Simple Shell
 
 ## Simple Shell
 
