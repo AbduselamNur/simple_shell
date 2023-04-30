@@ -1,88 +1,97 @@
 #include "main.h"
-char **strtok1(char *sr, char *a)
+char **strtok1(char *x, char *y)
 {
-        int i, j, z, m, count = 0;
-        char **v;
+        int i;
+	int j;
+	int z;
+	int m;
+	char **w;
+	int count = 0;
 
-        if (sr == NULL || sr[0] == 0)
+        if (x == NULL || x[0] == 0)
                 return (NULL);
-        if (!a)
-                a = " ";
-        for (i = 0; sr[i] != '\0'; i++)
-                if (!is_delim(sr[i], a) && (is_delim(sr[i + 1], a) || !sr[i + 1]))
+        if (!y)
+                y = " ";
+        for (i = 0; x[i] != '\0'; i++)
+                if (!is_delim(x[i], y) && (is_delim(x[i + 1], y) || !x[i + 1]))
                         count++;
 
         if (count == 0)
                 return (NULL);
-        v = malloc((1 + count) * sizeof(char *));
-        if (!v)
+        w = malloc((1 + count) * sizeof(char *));
+        if (!w)
                 return (NULL);
         for (i = 0, j = 0; j < count; j++)
         {
-                while (is_delim(sr[i], a))
+                while (is_delim(x[i], y))
                         i++;
                 z = 0;
-                while (!is_delim(sr[i + z], a) && sr[i + z])
+                while (!is_delim(x[i + z], y) && x[i + z])
                         z++;
-                v[j] = malloc((z + 1) * sizeof(char));
-                if (!v[j])
+                w[j] = malloc((z + 1) * sizeof(char));
+                if (!w[j])
                 {
                         for (z = 0; z < j; z++)
-                                free(v[z]);
-                        free(v);
+                                free(w[z]);
+                        free(w);
                         return (NULL);
                 }
                 for (m = 0; m < z; m++)
-                        v[j][m] = sr[i++];
-                v[j][m] = 0;
+                        w[j][m] = x[i++];
+                w[j][m] = 0;
         }
-        v[j] = NULL;
-        return (v);
+        w[j] = NULL;
+        return (w);
 }
-char *ghist_file(inf_o *inf)
+char *ghist_file(inf_o *val)
 {
-        char *b, *d;
+        char *v;
+	char *c;
 
-        d = genv(inf, "HOME=");
-        if (!d)
+        c = genv(val, "HOME=");
+        if (!c)
                 return (NULL);
-        b = malloc(sizeof(char) * (_strlen(d) + _strlen(H_F) + 2));
-        if (!b)
+        v = malloc(sizeof(char) * (_strlen(c) + _strlen(H_F) + 2));
+        if (!v)
                 return (NULL);
-        b[0] = 0;
-        _strcpy(b, d);
-        _strcat(b, "/");
-        _strcat(b, H_F);
-        return (b);
+        v[0] = 0;
+        _strcpy(v, c);
+        _strcat(v, "/");
+        _strcat(v, H_F);
+        return (v);
 }
 int w_hist(inf_o *var)
 {
-	ssize_t a;
-	char *fname = ghist_file(var);
+	ssize_t x;
+	char *fn = ghist_file(var);
 	lists_t *n = NULL;
 
-	if (!fname)
+	if (!fn)
 		return (-1);
 
-	a = open(fname, O_CREAT | O_TRUNC | O_RDWR, 0644);
-	free(fname);
-	if (a == -1)
+	x = open(fn, O_CREAT | O_TRUNC | O_RDWR, 0644);
+	free(fn);
+	if (x == -1)
 		return (-1);
 	for (n = var->hist; n; n = n->next)
 	{
-		_putsfd(n->str, a);
-		_putfd('\n', a);
+		_putsfd(n->str, x);
+		_putfd('\n', x);
 	}
-	_putfd(BUFSH, a);
-	close(a);
+	_putfd(BUFSH, x);
+	close(x);
 	return (1);
 }
-int r_hist(inf_o *inf)
+int r_hist(inf_o *val)
 {
-	int i, l = 0, lc = 0;
-	ssize_t f, rlen, fs = 0;
+	int i;
+	int l = 0;
+	int  lc = 0;
+	ssize_t f;
+	ssize_t rlen;
+        ssize_t fs = 0;
 	struct stat s;
-	char *b = NULL, *fname = ghist_file(inf);
+	char *v = NULL, *fname = ghist_file(val);
 
 	if (!fname)
 		return (0);
@@ -95,42 +104,42 @@ int r_hist(inf_o *inf)
 		fs = s.st_size;
 	if (fs < 2)
 		return (0);
-	b = malloc(sizeof(char) * (fs + 1));
-	if (!b)
+	v = malloc(sizeof(char) * (fs + 1));
+	if (!v)
 		return (0);
-	rlen = read(f, b, fs);
-	b[fs] = 0;
+	rlen = read(f, v, fs);
+	v[fs] = 0;
 	if (rlen <= 0)
-		return (free(b), 0);
+		return (free(v), 0);
 	close(f);
 	for (i = 0; i < fs; i++)
-		if (b[i] == '\n')
+		if (v[i] == '\n')
 		{
-			b[i] = 0;
-			b_hist_list(inf, b + l, lc++);
+			v[i] = 0;
+			b_hist_list(val, v + l, lc++);
 			l = i + 1;
 		}
 	if (l != i)
-		b_hist_list(inf, b + l, lc++);
-	free(b);
-	inf->hcount = lc;
-	while (inf->hcount-- >= H_M)
-		delete_node_at_i(&(inf->hist), 0);
-	re_hist(inf);
-	return (inf->hcount);
+		b_hist_list(val, v + l, lc++);
+	free(v);
+	val->hcount = lc;
+	while (val->hcount-- >= H_M)
+		delete_node_at_i(&(val->hist), 0);
+	re_hist(val);
+	return (val->hcount);
 }
-char **strtok2(char *sr, char a)
+char **strtok2(char *x, char y)
 {
         int i, j, z, m, count = 0;
         char **v;
 
-        if (sr == NULL || sr[0] == 0)
+        if (x == NULL || x[0] == 0)
                 return (NULL);
         i = 0;
-        for (i = 0; sr[i] != '\0'; i++)
+        for (i = 0; x[i] != '\0'; i++)
         {
-                if ((sr[i] != a && sr[i + 1] == a) ||
-                    (sr[i] != a && !sr[i + 1]) || sr[i + 1] == a)
+                if ((x[i] != y && x[i + 1] == y) ||
+                    (x[i] != y && !x[i + 1]) || x[i + 1] == y)
                         count++;
         }
         if (count == 0)
@@ -142,10 +151,10 @@ char **strtok2(char *sr, char a)
         j = 0;
         for (i = 0, j = 0; j < count; j++)
         {
-                while (sr[i] == a && sr[i] != a)
+                while (x[i] == y && x[i] != y)
                         i++;
                 z = 0;
-                while (sr[i + z] != a && sr[i + z] && sr[i + z] != a)
+                while (x[i + z] != y && x[i + z] && x[i + z] != y)
                         z++;
                 v[j] = malloc((z + 1) * sizeof(char));
                 if (!v[j])
@@ -156,7 +165,7 @@ char **strtok2(char *sr, char a)
                         return (NULL);
                 }
                 for (m = 0; m < z; m++)
-                        v[j][m] = sr[i++];
+                        v[j][m] = x[i++];
                 v[j][m] = 0;
         }
         v[j] = NULL;

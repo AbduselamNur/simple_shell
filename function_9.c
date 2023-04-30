@@ -1,66 +1,71 @@
 #include "main.h"
-void _eputs(char *s)
+void _eputs(char *x)
 {
-        int i = 0;
+        int n = 0;
 
-        if (!s)
+        if (!x)
                 return;
-        for (i = 0; s[i] != '\0'; i++)
-                _eputchar(s[i]);
+        for (n = 0; x[n] != '\0'; n++)
+                _eputchar(x[n]);
 }
-int _eatoi(char *str)
+int _eatoi(char *x)
 {
-	int i = 0;
-	unsigned long int l = 0;
+	int i;
+	unsigned long int a;
+       a = 0;
+       i = 0;
 
-	if (*str == '+')
-		str++;
+	if (*x == '+')
+		x++;
 	i = 0;
-	while (str[i] != '\0')
+	while (x[i] != '\0')
 	{
-		if (str[i] >= '0' && str[i] <= '9')
+		if (x[i] >= '0' && x[i] <= '9')
 		{
-			l *= 10;
-			l += (str[i] - '0');
-			if (l > INT_MAX)
+			a *= 10;
+			a += (x[a] - '0');
+			if (a > INT_MAX)
 				return (-1);
 		}
 		else
 			return (-1);
 		i++;
 	}
-	return (l);
+	return (a);
 }
-void p_err(inf_o *inf, char *str)
+void p_err(inf_o *var, char *x)
 {
-	_eputs(inf->fn);
+	_eputs(var->fn);
 	_eputs(": ");
-	p_d(inf->lcount, STDERR_FILENO);
+	p_d(var->lcount, STDERR_FILENO);
 	_eputs(": ");
-	_eputs(inf->argv[0]);
+	_eputs(var->argv[0]);
 	_eputs(": ");
-	_eputs(str);
+	_eputs(x);
 }
-int p_d(int in, int f)
+int p_d(int x, int y)
 {
 	int (*__putchar)(char) = _putchar;
-	int i, j = 0;
-	unsigned int s, cr;
+	int i;
+        int j;
+	unsigned int p;
+       unsigned int cr;
+       j = 0;
 
-	if (f == STDERR_FILENO)
+	if (y == STDERR_FILENO)
 		__putchar = _eputchar;
-	if (in < 0)
+	if (x < 0)
 	{
-		s = -in;
+		p = -x;
 		__putchar('-');
 		j++;
 	}
 	else
-		s = in;
-	cr = s;
+		p = x;
+	cr = p;
 	for (i = 1000000000; i > 1; i /= 10)
 	{
-		if (s / i)
+		if (p / i)
 		{
 			__putchar('0' + cr / i);
 			j++;
@@ -72,17 +77,17 @@ int p_d(int in, int f)
 
 	return (j);
 }
-int _putfd(char c, int f)
+int _putfd(char ch, int n)
 {
-        static int i;
-        static char b[WB_SIZE];
+        static int x;
+        static char v[WB_SIZE];
 
-        if (c == BUFSH || i >= WB_SIZE)
+        if (ch == BUFSH || x >= WB_SIZE)
         {
-                write(f, b, i);
-                i = 0;
+                write(n, v, x);
+                x = 0;
         }
-        if (c != BUFSH)
-                b[i++] = c;
+        if (ch != BUFSH)
+                v[x++] = ch;
         return (1);
 }

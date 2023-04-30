@@ -1,109 +1,112 @@
 #include "main.h"
-int stenv(inf_o *inf, char *l, char *i)
+int stenv(inf_o *val, char *x, char *y)
 {
         char *b = NULL;
         lists_t *n;
         char *k;
 
-        if (!l || !i)
+        if (!x || !y)
                 return (0);
 
-        b = malloc(_strlen(l) + _strlen(i) + 2);
+        b = malloc(_strlen(x) + _strlen(y) + 2);
         if (!b)
                 return (1);
-        _strcpy(b, l);
+        _strcpy(b, x);
         _strcat(b, "=");
-        _strcat(b, i);
-        n = inf->env;
+        _strcat(b, y);
+        n = val->env;
         while (n)
         {
-                k = st_wi(n->str, l);
+                k = st_wi(n->str, x);
                 if (k && *k == '=')
                 {
                         free(n->str);
                         n->str = b;
-                        inf->env_ch = 1;
+                        val->env_ch = 1;
                         return (0);
                 }
                 n = n->next;
         }
-        add_node_end(&(inf->env), b, 0);
+        add_node_end(&(val->env), b, 0);
         free(b);
-        inf->env_ch = 1;
+        val->env_ch = 1;
         return (0);
 }
-char *conv_n(long int m, int bs, int f)
+char *conv_n(long int x, int y, int z)
 {
         static char *r;
         static char b[50];
         char s = 0;
         char *p;
-        unsigned long n = m;
+        unsigned long n = x;
 
-        if (!(f & CONV_UNSIGN) && m < 0)
+        if (!(z & CONV_UNSIGN) && x < 0)
         {
-                n = -m;
+                n = -x;
                 s = '-';
 
         }
-        r = f & CONV_LOW ? "0123456789abcdef" : "0123456789ABCDEF";
+        r = z & CONV_LOW ? "0123456789abcdef" : "0123456789ABCDEF";
         p = &b[49];
         *p = '\0';
 
         do      {
-                *--p = r[n % bs];
-                n /= bs;
+                *--p = r[n % y];
+                n /= y;
         } while (n != 0);
 
         if (s)
                 *--p = s;
         return (p);
 }
-char **genvn(inf_o *inf)
+char **genvn(inf_o *var)
 {
-        if (!inf->environ || inf->env_ch)
+        if (!var->environ || var->env_ch)
         {
-                inf->environ = l_to_s(inf->env);
-                inf->env_ch = 0;
+                var->environ = l_to_s(var->env);
+                var->env_ch = 0;
         }
 
-        return (inf->environ);
+        return (var->environ);
 }
-void r_comm(char *b)
+void r_comm(char *v)
 {
-        int i = 0;
+        int x;
+        x = 0;
 
-        while (b[i] != '\0')
+        while (v[x] != '\0')
         {
-                if (b[i] == '#' && (!i || b[i - 1] == ' '))
+                if (v[x] == '#' && (!x || v[x - 1] == ' '))
                 {
-                        b[i] = '\0';
+                        v[x] = '\0';
                         break;
                 }
-                i++;
+                x++;
         }
 }
-int _unsetenv(inf_o *inf, char *l)
+int _unsetenv(inf_o *var, char *x)
 {
-        lists_t *n = inf->env;
-        size_t i = 0;
+        lists_t *q;
+        size_t i;
         char *k;
+	q = var->env;
+	i = 0;
 
-        if (!n || !l)
+        if (!q || !x)
                 return (0);
 
-        while (n)
+        while (q)
         {
-                k = st_wi(n->str, l);
+                k = st_wi(q->str, x);
                 if (k && *k == '=')
                 {
-                        inf->env_ch = delete_node_at_i(&(inf->env), i);
+                        var->env_ch = delete_node_at_i(&(var->env), i);
                         i = 0;
-                        n = inf->env;
+                        q = var->env;
                         continue;
                 }
-                n = n->next;
+                q = q->next;
                 i++;
         }
-        return (inf->env_ch);
+        return (var->env_ch);
 }
